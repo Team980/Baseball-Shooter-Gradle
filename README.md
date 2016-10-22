@@ -15,6 +15,8 @@ Then generate the project files for your IDE:
 - ```gradlew build``` will build your Robot Code
 - ```gradlew deploy``` will build and deploy your code to the RoboRIO
 
+More instructions on how to use GradleRIO are located in GradleRIOForDummies.txt.
+
 ## Pushing to GitHub
 
 To push your updates to GitHub, simply use ```git push``` the Github Desktop app.
