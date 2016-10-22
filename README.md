@@ -11,6 +11,10 @@ Then generate the project files for your IDE:
 - ```gradlew idea``` (IntelliJ IDEA)
 - ```gradlew eclipse``` (Eclipse)
 
+IntelliJ IDEA has native support for Gradle. Eclipse users should install the [http://projects.eclipse.org/projects/tools.buildship](Buuildship Gradle plugin for Eclipse), as the plugin does NOT come with the C++ distribution!
+
+Eclipse users should also DISABLE WPILib if they have it installed. 
+
 ## Building and deploying your code
 - ```gradlew build``` will build your Robot Code
 - ```gradlew deploy``` will build and deploy your code to the RoboRIO
