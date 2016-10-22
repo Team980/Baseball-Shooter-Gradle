@@ -22,7 +22,7 @@ Eclipse users should also DISABLE WPILib if they have it installed.
 More instructions on how to use GradleRIO are located in GradleRIO4Dummies.txt.
 
 These tasks are also listed in the Gradle window in IntelliJ IDEA, or the Gradle Tasks window in Eclipse.
-You can even create run configurations to launch these tasks.
+You can even create run configurations to launch these tasks!
 
 ## Pushing to GitHub
 
