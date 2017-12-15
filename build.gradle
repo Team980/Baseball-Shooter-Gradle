@@ -1,32 +1,48 @@
+// GradleRIO base configutation file.
+// Information on how to use this is available here:
+// https://github.com/Open-RIO/GradleRIO#gradlerio
 plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2017.1.5" //TODO 11.27 rewrite with new model
+    id "jaci.openrio.gradle.GradleRIO" version "2017.11.27"
 }
 
-frc {
-    team = "980"
-    robotClass = "com.team980.baseballshooter.Robot"
-}
+def TEAM = 980
+def ROBOT_CLASS = "com.team980.baseballshooter"
 
-wpi {
-    opencvVersion = "3.1.0" //Fix GradleRIO error
+// Instructions on how to configure this are available here:
+// https://github.com/JacisNonsense/EmbeddedTools#spec
+deploy {
+    targets {
+        target("roborio", jaci.openrio.gradle.frc.RoboRIO) {
+            team = TEAM
+            //addresses << 'roboRIO-980-FRC.local' << '10.9.80.1' //In order of preference
+        }
+    }
+    artifacts {
+        artifact('frcJava', jaci.openrio.gradle.frc.FRCJavaArtifact) {
+            targets << "roborio"
+        }
+    }
 }
 
 dependencies {
     compile wpilib()
-    compile talonSrx()
+    compile ctre()
 }
 
-def robotManifest = {
-    attributes 'Main-Class': 'edu.wpi.first.wpilibj.RobotBase'
-    attributes 'Robot-Class': frc.robotClass
+// Stable versions are automatically selected based on the installed GradleRIO version
+wpi {
+    //wpilibVersion = '2017.3.1'
+    //ctreVersion = '4.4.1.14'
+    //smartDashboardVersion = '...'
+    //javaInstallerVersion = '...'
 }
 
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest robotManifest
+    manifest jaci.openrio.gradle.GradleRIOPlugin.javaManifest(ROBOT_CLASS)
 }
 
 task wrapper(type: Wrapper) {
