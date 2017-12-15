@@ -1,4 +1,4 @@
-// GradleRIO base configutation file.
+// GradleRIO base configuration file.
 // Information on how to use this is available here:
 // https://github.com/Open-RIO/GradleRIO#gradlerio
 plugins {
@@ -36,8 +36,8 @@ dependencies {
 wpi {
     //wpilibVersion = '2017.3.1'
     //ctreVersion = '4.4.1.14'
-    //smartDashboardVersion = '...'
-    //javaInstallerVersion = '...'
+    //smartDashboardVersion = '+'
+    //javaInstallerVersion = '+'
 }
 
 jar {
