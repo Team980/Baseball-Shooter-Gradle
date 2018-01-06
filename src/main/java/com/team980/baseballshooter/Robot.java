@@ -1,10 +1,11 @@
 package com.team980.baseballshooter;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 public class Robot extends IterativeRobot {
 
-    private RobotDrive robotDrive;
+    private DifferentialDrive robotDrive;
 
     private Joystick driveStick;
 
@@ -20,7 +21,10 @@ public class Robot extends IterativeRobot {
     //private Encoder rightDriveEnc;
 
     public Robot() {
-        robotDrive = new RobotDrive(Parameters.leftDriveMotorChannel, Parameters.rightDriveMotorChannel);
+        Jaguar leftDriveController = new Jaguar(Parameters.leftDriveMotorChannel);
+        Jaguar rightDriveController = new Jaguar(Parameters.rightDriveMotorChannel);
+
+        robotDrive = new DifferentialDrive(leftDriveController, rightDriveController);
         robotDrive.setMaxOutput(Parameters.maxDriveOutput);
 
         driveStick = new Joystick(Parameters.driveJsChannel);
@@ -69,7 +73,7 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        System.out.println("laser cannon ready");
+        System.out.println("laser cannon ready"); //TODO replace these with Shuffleboard widget outputs (SmartDashboard or NetworkTables)
 
         if (driveStick.getRawButton(Parameters.driveJsWinchPullButton)) {
             //Pull the winch
@@ -95,7 +99,7 @@ public class Robot extends IterativeRobot {
         }
 
         if (firing && ((firingTimer.get() >= stopTime) || (driveStick.getRawButton(Parameters.driveJsEStopButton)))) {
-            firing = false;;
+            firing = false;
 
             System.out.println("STOP THE CANNON");
         }
@@ -115,12 +119,14 @@ public class Robot extends IterativeRobot {
         }
 
         //Custom inputs to fix the turning
-        robotDrive.arcadeDrive(driveStick.getY(), driveStick.getZ() * -1);
+        robotDrive.arcadeDrive(driveStick.getY(), driveStick.getZ() * -1); //Test curvatureDrive?
     }
 
-    public void disabledInit() {
-        winchRelay.set(Relay.Value.kOff);
-        actuatorRelay.set(Relay.Value.kOff);
+    public void disabledInit() { //Stop ALL the motors
+        robotDrive.stopMotor();
+
+        winchRelay.stopMotor();
+        actuatorRelay.stopMotor();
     }
 
     public void testPeriodic() {
