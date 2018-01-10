@@ -9,11 +9,11 @@ plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.06b"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.01.07"
 }
 
 def TEAM = 980
-def ROBOT_CLASS = "com.team980.baseballshooter"
+def ROBOT_CLASS = "com.team980.baseballshooter.Robot"
 
 // Instructions on how to configure this are available here:
 // https://github.com/JacisNonsense/EmbeddedTools#spec
