@@ -3,11 +3,13 @@ package com.team980.baseballshooter;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+import static com.team980.baseballshooter.Parameters.*;
+
 public class Robot extends IterativeRobot {
 
     private DifferentialDrive robotDrive;
 
-    private Joystick driveStick;
+    private Joystick xboxController;
 
     private Relay winchRelay;
     private Relay actuatorRelay;
@@ -17,55 +19,19 @@ public class Robot extends IterativeRobot {
     private Timer firingTimer;
     private double stopTime;
 
-    //private Encoder leftDriveEnc;
-    //private Encoder rightDriveEnc;
-
     public Robot() {
-        Jaguar leftDriveController = new Jaguar(Parameters.leftDriveMotorChannel);
-        Jaguar rightDriveController = new Jaguar(Parameters.rightDriveMotorChannel);
+        Jaguar leftDriveController = new Jaguar(LEFT_DRIVE_PWM_ID);
+        Jaguar rightDriveController = new Jaguar(RIGHT_DRIVE_PWM_ID);
 
         robotDrive = new DifferentialDrive(leftDriveController, rightDriveController);
-        robotDrive.setMaxOutput(Parameters.maxDriveOutput);
+        robotDrive.setMaxOutput(MAX_DRIVE_OUTPUT);
 
-        driveStick = new Joystick(Parameters.driveJsChannel);
+        xboxController = new Joystick(XBOX_CONTROLLER_CHANNEL);
 
-        winchRelay = new Relay(Parameters.winchRelayChannel);
-        actuatorRelay = new Relay(Parameters.actuatorRelayChannel);
-
-        //leftDriveEnc = new Encoder(Parameters.leftDriveEncA, Parameters.leftDriveEncB);
-        //leftDriveEnc.setDistancePerPulse(2*Constants.pi*(Constants.wheelRadius/Constants.inchesInFeet)/Parameters.driveEncoderCounts); TODO figure out the calculations for this
-        //leftDriveEnc.setReverseDirection(Parameters.leftDriveEncInv);
-        //rightDriveEnc = new Encoder(Parameters.rightDriveEncA, Parameters.rightDriveEncB);
-        //rightDriveEnc.setDistancePerPulse(2*Constants.pi*(Constants.wheelRadius/Constants.inchesInFeet)/Parameters.driveEncoderCounts); TODO crunch the numbers
-        //rightDriveEnc.setReverseDirection(Parameters.rightDriveEncInv);
+        winchRelay = new Relay(WINCH_RELAY_CHANNEL);
+        actuatorRelay = new Relay(ACTUATOR_RELAY_CHANNEL);
 
         firingTimer = new Timer();
-    }
-
-    public void robotInit() {
-        //leftDriveEnc.reset();
-        //rightDriveEnc.reset();
-    }
-
-    public void autonomousInit() {
-
-    }
-
-    public void autonomousPeriodic() {
-    	
-    	/*double currentDistLeft = leftDriveEnc.getDistance();
-    	double currentDistRight = rightDriveEnc.getDistance();
-    	
-    	if (currentDistLeft > Parameters.autoDistance &&
-    			currentDistRight > Parameters.autoDistance) {
-    		robotDrive.setLeftRightMotorOutputs(0, 0); //stops the robot
-    	} else {
-    		robotDrive.setLeftRightMotorOutputs(Parameters.leftMotorMultiplier * Parameters.autoSpeed, 
-    				Parameters.rightMotorMultiplier * Parameters.autoSpeed);
-    	}
-    	
-    	SmartDashboard.putNumber("Current Distance - Left", currentDistLeft);
-    	SmartDashboard.putNumber("Current Distance - Right", currentDistRight);*/
     }
 
     public void teleopInit() {
@@ -73,53 +39,48 @@ public class Robot extends IterativeRobot {
     }
 
     public void teleopPeriodic() {
-        System.out.println("laser cannon ready"); //TODO replace these with Shuffleboard widget outputs (SmartDashboard or NetworkTables)
-
-        if (driveStick.getRawButton(Parameters.driveJsWinchPullButton)) {
-            //Pull the winch
+        if (xboxController.getRawButton(CONTROLLER_WINCH_PULL_BUTTON)) { //Pull the winch back to prime shooter
             winchRelay.set(Relay.Value.kForward);
-            //System.out.println("Relay FORWARD");
-        } else if (driveStick.getRawButton(Parameters.driveJsWinchReleaseButton)) {
-            //Release the winch
+        } else if (xboxController.getRawButton(CONTROLLER_WINCH_RELEASE_BUTTON)) { //Release the winch to reload
             winchRelay.set(Relay.Value.kReverse);
-            //System.out.println("Relay REVERSE");
         } else {
-            //Do nothing with the winch
             winchRelay.set(Relay.Value.kOff);
         }
 
-        if (driveStick.getRawButton(Parameters.driveJsTriggerButton) && driveStick.getRawButton(Parameters.driveJsFailsafeButton)
-                && canFire) {
-            //Fire the baseball!
+        if (xboxController.getRawAxis(CONTROLLER_FIRE_AXIS_A) > CONTROLLER_FIRE_AXIS_THRESHOLD
+                && xboxController.getRawAxis(CONTROLLER_FIRE_AXIS_B) > CONTROLLER_FIRE_AXIS_THRESHOLD
+                && canFire) { //Set firing state
             firing = true;
             canFire = false;
 
-            stopTime = firingTimer.get() + Parameters.actuatorStopTime;
-            System.out.println("FIRE THE CANNON");
+            stopTime = firingTimer.get() + ACTUATOR_STOP_TIME;
         }
 
-        if (firing && ((firingTimer.get() >= stopTime) || (driveStick.getRawButton(Parameters.driveJsEStopButton)))) {
+        if (firing && ((firingTimer.get() >= stopTime) || (xboxController.getRawButton(CONTROLLER_E_STOP_BUTTON)))) { //Stop firing when timer is up
             firing = false;
-
-            System.out.println("STOP THE CANNON");
         }
 
-        if (firing) {
-            //Fire the cannon!
+        if (firing) { //Fire the shooter!
             actuatorRelay.set(Relay.Value.kForward);
-            System.out.println("FIRING");
-        } else if (driveStick.getRawButton(Parameters.driveJsRetractButton) && !driveStick.getRawButton(Parameters.driveJsEStopButton)) {
-            //Bring the actuator back
+
+        } else if (xboxController.getRawButton(CONTROLLER_E_STOP_BUTTON)) { //Emergency stop on controller
+            firing = false;
+            canFire = false;
+            actuatorRelay.set(Relay.Value.kOff);
+
+        } else if (xboxController.getRawButton(CONTROLLER_ACTUATOR_PRIME_BUTTON)) { //Pull the actuator back to prime shooter
             canFire = true;
             actuatorRelay.set(Relay.Value.kReverse);
-            System.out.println("REVERSE");
+
+        } else if (xboxController.getRawButton(CONTROLLER_ACTUATOR_RELEASE_BUTTON)) { //Release the actuator to de-prime shooter
+            canFire = false;
+            actuatorRelay.set(Relay.Value.kForward);
+
         } else {
             actuatorRelay.set(Relay.Value.kOff);
-            System.out.println("NOPE");
         }
 
-        //Custom inputs to fix the turning
-        robotDrive.arcadeDrive(driveStick.getY(), driveStick.getZ() * -1); //Test curvatureDrive?
+        robotDrive.arcadeDrive(xboxController.getRawAxis(CONTROLLER_DRIVE_AXIS), xboxController.getRawAxis(CONTROLLER_TURN_AXIS));
     }
 
     public void disabledInit() { //Stop ALL the motors
@@ -127,10 +88,6 @@ public class Robot extends IterativeRobot {
 
         winchRelay.stopMotor();
         actuatorRelay.stopMotor();
-    }
-
-    public void testPeriodic() {
-
     }
 
 }

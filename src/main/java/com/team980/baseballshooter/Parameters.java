@@ -3,43 +3,32 @@ package com.team980.baseballshooter;
 public class Parameters {
 
     // --- DRIVE SYSTEM ---
-    public static int leftDriveMotorChannel = 0;
-    public static int rightDriveMotorChannel = 1;
-    public static double maxDriveOutput = 0.4;
-
-    public static double leftMotorMultiplier = 1.0; //TODO determine these values
-    public static double rightMotorMultiplier = 1.0; //TODO based on encoder tuning
-
-    // --- AUTONOMOUS ---
-    public static double autoDistance = 15.0; //feet
-    public static double autoSpeed = 1.0;
+    public static final int LEFT_DRIVE_PWM_ID = 0;
+    public static final int RIGHT_DRIVE_PWM_ID = 1;
+    public static final double MAX_DRIVE_OUTPUT = 0.4;
 
     // --- RELAYS ---
-    public static int winchRelayChannel = 0;
-    public static int actuatorRelayChannel = 1;
-
-    // --- ENCODERS ---
-    public static int leftDriveEncA = 0;
-    public static int leftDriveEncB = 1;
-    public static boolean leftDriveEncInv = false; //TODO
-
-    public static int rightDriveEncA = 2;
-    public static int rightDriveEncB = 3;
-    public static boolean rightDriveEncInv = false; //TODO
-
-    public static int driveEncoderCounts = -1; //TODO
+    public static final int WINCH_RELAY_CHANNEL = 0;
+    public static final int ACTUATOR_RELAY_CHANNEL = 1;
 
     // --- TIMINGS ---
-    public static double actuatorStopTime = 1.9;
+    public static final double ACTUATOR_STOP_TIME = 1.9;
 
     // --- JOYSTICKS / DRIVER INPUTS ---
-    public static int driveJsChannel = 0;
+    public static final int XBOX_CONTROLLER_CHANNEL = 2;
 
-    public static int driveJsWinchPullButton = 3;
-    public static int driveJsWinchReleaseButton = 4;
+    public static final int CONTROLLER_DRIVE_AXIS = 1; //Left stick - Y (invert)
+    public static final int CONTROLLER_TURN_AXIS = 4; //Right stick - X
 
-    public static int driveJsTriggerButton = 1;
-    public static int driveJsFailsafeButton = 9;
-    public static int driveJsRetractButton = 2;
-    public static int driveJsEStopButton = 5; //for testing
+    public static final int CONTROLLER_WINCH_PULL_BUTTON = 5; //Left shoulder
+    public static final int CONTROLLER_WINCH_RELEASE_BUTTON = 6; //Right shoulder
+
+    public static final int CONTROLLER_FIRE_AXIS_A = 2; //Left trigger
+    public static final int CONTROLLER_FIRE_AXIS_B = 3; //Right trigger
+
+    public static final double CONTROLLER_FIRE_AXIS_THRESHOLD = 0.9;
+
+    public static final int CONTROLLER_ACTUATOR_PRIME_BUTTON = 1; //A face button
+    public static final int CONTROLLER_ACTUATOR_RELEASE_BUTTON = 2; //B face button
+    public static final int CONTROLLER_E_STOP_BUTTON = 3; //X face button
 }
