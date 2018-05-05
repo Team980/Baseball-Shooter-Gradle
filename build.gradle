@@ -9,7 +9,7 @@ plugins {
     id "java"
     id "eclipse"
     id "idea"
-    id "jaci.openrio.gradle.GradleRIO" version "2018.01.07"
+    id "jaci.openrio.gradle.GradleRIO" version "2018.03.06"
 }
 
 def TEAM = 980
@@ -31,15 +31,14 @@ deploy {
     }
 }
 
+wpi {
+    //wpilibVersion = '2018.4.1'
+    //ctreVersion = '5.4.3.0'
+}
+
 dependencies {
     compile wpilib()
     compile ctre()
-}
-
-// Stable versions are automatically selected based on the installed GradleRIO version
-wpi {
-    //wpilibVersion = '2018.1.1'
-    //ctreVersion = '5.1.2.1'
 }
 
 jar {
