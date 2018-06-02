@@ -7,8 +7,10 @@ public class Parameters {
     public static final int RIGHT_DRIVE_PWM_ID = 1;
     public static final double MAX_DRIVE_OUTPUT = 0.4;
 
+    // --- PWM CHANNELS ---
+    public static final int WINCH_PWM_CHANNEL = 2;
+
     // --- RELAYS ---
-    public static final int WINCH_RELAY_CHANNEL = 0;
     public static final int ACTUATOR_RELAY_CHANNEL = 1;
 
     // --- TIMINGS ---
@@ -17,7 +19,7 @@ public class Parameters {
     // --- JOYSTICKS / DRIVER INPUTS ---
     public static final int XBOX_CONTROLLER_CHANNEL = 2;
 
-    public static final int CONTROLLER_DRIVE_AXIS = 1; //Left stick - Y (invert)
+    public static final int CONTROLLER_DRIVE_AXIS = 1; //Left stick - Y
     public static final int CONTROLLER_TURN_AXIS = 4; //Right stick - X
 
     public static final int CONTROLLER_WINCH_PULL_BUTTON = 5; //Left shoulder

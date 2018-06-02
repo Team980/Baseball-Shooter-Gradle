@@ -11,13 +11,13 @@ public class Robot extends IterativeRobot {
 
     private Joystick xboxController;
 
-    private Relay winchRelay;
+    private Talon winchMotor;
     private Relay actuatorRelay;
 
     private boolean canFire = true;
     private boolean firing = false;
+
     private Timer firingTimer;
-    private double stopTime;
 
     public Robot() {
         Jaguar leftDriveController = new Jaguar(LEFT_DRIVE_PWM_ID);
@@ -25,11 +25,14 @@ public class Robot extends IterativeRobot {
 
         robotDrive = new DifferentialDrive(leftDriveController, rightDriveController);
         robotDrive.setMaxOutput(MAX_DRIVE_OUTPUT);
+        robotDrive.setName("Robot Drive");
 
         xboxController = new Joystick(XBOX_CONTROLLER_CHANNEL);
 
-        winchRelay = new Relay(WINCH_RELAY_CHANNEL);
+        winchMotor = new Talon(WINCH_PWM_CHANNEL);
+        winchMotor.setName("Winch Motor");
         actuatorRelay = new Relay(ACTUATOR_RELAY_CHANNEL);
+        actuatorRelay.setName("Actuator Relay");
 
         firingTimer = new Timer();
     }
@@ -40,11 +43,11 @@ public class Robot extends IterativeRobot {
 
     public void teleopPeriodic() {
         if (xboxController.getRawButton(CONTROLLER_WINCH_PULL_BUTTON)) { //Pull the winch back to prime shooter
-            winchRelay.set(Relay.Value.kForward);
+            winchMotor.set(1.0);
         } else if (xboxController.getRawButton(CONTROLLER_WINCH_RELEASE_BUTTON)) { //Release the winch to reload
-            winchRelay.set(Relay.Value.kReverse);
+            winchMotor.set(-1.0);
         } else {
-            winchRelay.set(Relay.Value.kOff);
+            winchMotor.set(0);
         }
 
         if (xboxController.getRawAxis(CONTROLLER_FIRE_AXIS_A) > CONTROLLER_FIRE_AXIS_THRESHOLD
@@ -53,11 +56,13 @@ public class Robot extends IterativeRobot {
             firing = true;
             canFire = false;
 
-            stopTime = firingTimer.get() + ACTUATOR_STOP_TIME;
+            firingTimer.reset();
+            firingTimer.start();
         }
 
-        if (firing && ((firingTimer.get() >= stopTime) || (xboxController.getRawButton(CONTROLLER_E_STOP_BUTTON)))) { //Stop firing when timer is up
+        if (firing && firingTimer.hasPeriodPassed(ACTUATOR_STOP_TIME) || (xboxController.getRawButton(CONTROLLER_E_STOP_BUTTON))) { //Stop firing when timer is up
             firing = false;
+            firingTimer.stop();
         }
 
         if (firing) { //Fire the shooter!
@@ -86,7 +91,7 @@ public class Robot extends IterativeRobot {
     public void disabledInit() { //Stop ALL the motors
         robotDrive.stopMotor();
 
-        winchRelay.stopMotor();
+        winchMotor.stopMotor();
         actuatorRelay.stopMotor();
     }
 
