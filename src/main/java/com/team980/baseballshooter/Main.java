@@ -22,45 +22,23 @@
  * SOFTWARE.
  */
 
-import edu.wpi.first.gradlerio.GradleRIOPlugin
+package com.team980.baseballshooter;
 
-plugins {
-    id "java"
-    id "idea"
-    id "eclipse"
-    id "edu.wpi.first.GradleRIO" version "2019.4.1"
-}
+import edu.wpi.first.wpilibj.RobotBase;
 
-def MAIN_CLASS = "com.team980.baseballshooter.Main"
+/**
+ * This class should not be modified in any way, except to change the Robot class!
+ */
+public final class Main {
 
-// Instructions on how to configure this are available here:
-// https://github.com/JacisNonsense/EmbeddedTools#spec
-deploy {
-    targets {
-        roboRIO("roborio") {
-            team = 980
-            //addresses << '10.9.80.2' << 172.22.11.2' //In order of preference
-        }
+    private Main() {
     }
-    artifacts {
-        frcJavaArtifact("frcJava") {
-            targets << "roborio"
-        }
+
+    /**
+     * Main initialization function. Do not perform any initialization here.
+     * If you change your main robot class, change the parameter type.
+     */
+    public static void main(String... args) {
+        RobotBase.startRobot(Robot::new);
     }
-}
-
-dependencies {
-    compile wpi.deps.wpilib()
-    compile wpi.deps.vendor.java()
-    nativeZip wpi.deps.vendor.jni(wpi.platforms.roborio)
-    nativeDesktopZip wpi.deps.vendor.jni(wpi.platforms.desktop)
-}
-
-jar {
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    manifest GradleRIOPlugin.javaManifest(MAIN_CLASS)
-}
-
-wrapper {
-    gradleVersion = '5.1'
 }
